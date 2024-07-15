@@ -1,0 +1,35 @@
+
+-- Analysis performed on the 1st match between the Chennai Super Kings and Royal Challengers Bengaluru
+
+
+
+-- Match level summary
+SELECT 
+    m.match_id,
+    m.match_date,
+    v.venue_name,
+    t.team_name AS winning_team_name
+FROM 
+    match m
+JOIN 
+    venue v ON m.venue_id = v.venue_id
+JOIN 
+    result r ON m.match_id = r.match_id
+JOIN 
+    team t ON r.winning_team_id = t.team_id
+
+
+
+
+-- Total runs and total wickets per team by inning
+SELECT 
+    i.match_id,
+    i.innings_no,
+    t.team_name,
+    SUM(s.runs_off_bat) + SUM(s.extras) AS total_runs,
+    COUNT(s.wicket_type) AS total_wickets
+FROM 
+    innings i
+    JOIN team t ON i.batting_team_id = t.team_id 
+    JOIN score_by_ball s ON (i.match_id = s.match_id) AND (i.innings_no = s.innings_no)
+GROUP BY i.match_id, i.innings_no, t.team_name
